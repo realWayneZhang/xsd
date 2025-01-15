@@ -1,10 +1,10 @@
-import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
+import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
+import { AdvertModel, defaultAd, UserPreferences } from 'basic';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
-    this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
   }
 
@@ -12,11 +12,31 @@ export default class EntryAbility extends UIAbility {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onDestroy');
   }
 
-  onWindowStageCreate(windowStage: window.WindowStage): void {
+  async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
-    windowStage.loadContent('pages/Index', (err) => {
+    // 进入应用的时候，调用后台接口获取广告配置
+    const ad = await new Promise<AdvertModel>((resolve) => {
+      setTimeout(() => {
+        resolve(defaultAd)
+      }, 500)
+    })
+
+    // 将广告的配置存储到本地
+    const pref = new UserPreferences(this.context)
+    pref.setUserAd(ad)
+
+    if (ad.showAd) {
+      // 创建子窗口
+      const window = await windowStage.createSubWindow('ad_window')
+      // 显示子窗口
+      await window.showWindow()
+      // 加载广告
+      window.setUIContent('pages/start/StartPage')
+    }
+
+    windowStage.loadContent('pages/login/LoginPage', (err) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
         return;
