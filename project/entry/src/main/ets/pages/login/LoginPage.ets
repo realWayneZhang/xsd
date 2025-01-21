@@ -1,5 +1,7 @@
 import { LoginApi } from '../../api/user';
 import { AccountForm } from '../../models'
+import { router } from '@kit.ArkUI';
+import { UserPreferences } from 'basic';
 
 @Entry
 @Component
@@ -19,10 +21,17 @@ struct LoginPage {
     this.showLoading = true;
     // 调用登录接口
     try {
-      const res = await LoginApi(this.accoutForm)
-       AlertDialog.show({
-         message: JSON.stringify(res)
-       })
+      // const res = await LoginApi(this.accoutForm)
+      //  AlertDialog.show({
+      //    message: JSON.stringify(res)
+      //  })
+
+      // 1. 将 token 存储到本地
+      const pref = new UserPreferences(getContext())
+      pref.setUserToken('1234567890')
+      // 2. 跳转到主页（首页）
+      router.pushUrl({url: 'pages/index/Index'})
+
     } catch (e) {
       console.log('error', e);
     } finally {

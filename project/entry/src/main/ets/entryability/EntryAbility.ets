@@ -1,7 +1,8 @@
 import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
-import { window } from '@kit.ArkUI';
+import { SystemMediaQuery, window } from '@kit.ArkUI';
 import { AdvertModel, defaultAd, UserPreferences } from 'basic';
+import AppUtil from '../../util/AppUtil';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -36,13 +37,37 @@ export default class EntryAbility extends UIAbility {
       window.setUIContent('pages/start/StartPage')
     }
 
-    windowStage.loadContent('pages/login/LoginPage', (err) => {
+    windowStage.getMainWindow((err, mainWindow: window.Window) => {
       if (err.code) {
-        hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
-        return;
+        hilog.error(0x0000, 'testTag', 'Failed to get main window. Cause: %{public}s', JSON.stringify(err));
+      } else {
+        // mainWindow.setWindowLayoutFullScreen(true)
+        let avoidArea: window.AvoidArea = mainWindow.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM)
+        let vpStatusBarHeight: number = px2vp(avoidArea.topRect.height)
+        let vpNavigationBarHeight: number = px2vp(avoidArea.bottomRect.height)
+        let safeArea: Margin = {
+          top: vpStatusBarHeight,
+          bottom: vpNavigationBarHeight,
+        }
+        AppUtil.saveSafeArea(safeArea)
       }
-      hilog.info(0x0000, 'testTag', 'Succeeded in loading the content.');
-    });
+    })
+
+    // 1. 获取 token
+    const token = pref.getUserToken()
+    let path = ''
+    if (token) {
+      path = 'pages/index/Index'
+    } else {
+      path = 'pages/login/LoginPage'
+    }
+    windowStage.loadContent(path, (err) => {
+      if (err.code) {
+        hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err));
+      }
+      hilog.info(0x0000, 'testTag', '%{public}s', 'Succeeded in loading the content.')
+    })
+
   }
 
   onWindowStageDestroy(): void {

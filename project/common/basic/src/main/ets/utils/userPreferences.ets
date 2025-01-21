@@ -2,7 +2,7 @@ import { preferences } from '@kit.ArkData'
 import { Context } from '@kit.AbilityKit'
 import { AdvertModel } from '../models/advert'
 import { JSON } from '@kit.ArkTS'
-import { PREFERENCES_NAME, XSD_OPEN_SCREEN_AD } from '../constants'
+import { PREFERENCES_NAME, XSD_OPEN_SCREEN_AD, XSD_USER_TOKEN } from '../constants'
 
 
 // 广告的默认配置
@@ -39,5 +39,23 @@ export class UserPreferences {
     const store = this.shared;
     let m = JSON.parse(store.getSync(XSD_OPEN_SCREEN_AD, JSON.stringify(defaultAd)) as string)
     return m as AdvertModel
+  }
+
+  // 存储 token
+  setUserToken(token: string) {
+    // 获取仓库
+    const store = this.shared
+    // 给仓库添加数据
+    store.putSync(XSD_USER_TOKEN, token)
+    // 写入到磁盘
+    store.flush()
+  }
+
+  // 获取存储在首选项中的 token
+  getUserToken() {
+    // 获取仓库
+    const store = this.shared
+    // 获取 token
+    return store.getSync(XSD_USER_TOKEN, '') as string
   }
 }
