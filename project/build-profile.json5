@@ -1,6 +1,19 @@
 {
   "app": {
     "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/juswin/.ohos/config/default_project_JQnn9VqD6XyuxiyWUAcFTfcyLTTDjdxi1TEr_yCyXj0=.cer",
+          "storePassword": "0000001B3C36941ADD9838DF1C18A68E4A87722F6DB834EA6D29A34EE92E461F51F1A935EA8B95E5E28018",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B9DD18671269C82F01B7C691DB5C48ADEC42CFE590A019B74C9C1A9BD7E55023C0BBFE1048FC699",
+          "profile": "/Users/juswin/.ohos/config/default_project_JQnn9VqD6XyuxiyWUAcFTfcyLTTDjdxi1TEr_yCyXj0=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/juswin/.ohos/config/default_project_JQnn9VqD6XyuxiyWUAcFTfcyLTTDjdxi1TEr_yCyXj0=.p12"
+        }
+      }
     ],
     "products": [
       {

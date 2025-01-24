@@ -17,6 +17,9 @@ service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 // 响应拦截器
 service.interceptors.response.use((response: AxiosResponse) => {
+  if (response.status === 200 && response.data.code === 200) {
+    return response.data.data;
+  }
   return response
 }, (error: AxiosError) => {
   return Promise.reject(error)
